@@ -1,10 +1,9 @@
 #pragma once
 
 #include "Hazel/Core.h"
+#include "hzpch.h"
 
-#include <string>
-#include <functional>
-#include <iostream>
+
 
 namespace Hazel
 {
@@ -33,7 +32,8 @@ namespace Hazel
 	};
 
 
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType(){ return EventType::##type;}\
+#define EVENT_CLASS_TYPE(type) \
+								static EventType GetStaticType(){ return EventType::type;}\
 								virtual EventType GetEventType() const override {return GetStaticType();}\
 								virtual const char* GetName()const override {return #type;}
 
@@ -57,6 +57,8 @@ namespace Hazel
 		bool m_Handled = false;
 
 	};
+
+
 
 	class EventDispatcher
 	{
@@ -83,11 +85,10 @@ namespace Hazel
 		Event& m_Event;
 	};
 
-	inline std::ostream& operator<<(std::ostream& os, const Event& e)
+	 inline std::ostream& operator<<(std::ostream& os, const Event& e)
 	{
-		return os << e.ToString();
+		 return os << e.ToString();
 	}
-
 
 
 }
