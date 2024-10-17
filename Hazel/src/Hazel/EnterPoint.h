@@ -14,7 +14,7 @@ int  main(int argc,char** argv)
 
 	printf("Hello Engine!");
 	auto app = Hazel::CreateApplication();
-	app->Run();
+ 	app->Run();
 	delete app;
 
 }

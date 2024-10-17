@@ -3,6 +3,7 @@
 
 
 #include "Hazel/Events/ApplicationEvent.h"
+#include <GLFW/glfw3.h>
 
 namespace Hazel
 {
@@ -21,9 +22,28 @@ namespace Hazel
 
 	}
 
+	void Application::PushLayer(Layer* layer)
+	{
+		m_LayerStack.PushLayer(layer);
+	}
+
+	void Application::PushOverlay(Layer* layer)
+	{
+		m_LayerStack.PushOverlay(layer);
+	}
+
 	void Application::OnEvent(Event& e)
 	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 		HZ_CORE_INFO("{0}",e);
+
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+		{
+			(*--it)->OnEvent(e);
+			if (e.m_Handled)
+				break;
+		}
 	}
 
 	void Application::Run()
@@ -31,7 +51,20 @@ namespace Hazel
 
 		while (m_running)
 		{
+			
+			m_Window->OnUpdate();
+
+			for (Layer* layer : m_LayerStack)
+				layer->OnUpdate();
+
 			m_Window->OnUpdate();
 		}
 	}
+
+	bool Application::OnWindowClose(WindowCloseEvent& e)
+	{
+		m_running = false;
+		return true;
+	}
 }
+
