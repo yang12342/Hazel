@@ -1,6 +1,6 @@
 #include "hzpch.h"
 #include "Application.h"
-
+#include "Input.h"
 
 #include "Hazel/Events/ApplicationEvent.h"
 #include <glad/glad.h>
@@ -23,8 +23,12 @@ namespace Hazel
 			this->OnEvent(event);  // 调用成员函数
 			});
 
-		m_Window->SetVSync(false);
+		m_Window->SetVSync(true);
 		//m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_ImGuiLayer);
 
 
 	}
@@ -66,13 +70,19 @@ namespace Hazel
 
 		while (m_running)
 		{
+			glClearColor(1, 0, 1, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
 			
-			m_Window->OnUpdate();
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
-			
+			m_ImGuiLayer->Begin();
+			for (Layer* layer : m_LayerStack)
+				layer->OnImGuiRender();
+			m_ImGuiLayer->End();
+
+			m_Window->OnUpdate();
 		}
 	}
 
