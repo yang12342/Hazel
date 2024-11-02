@@ -15,20 +15,20 @@ namespace Hazel
 	enum class EventType
 	{
 		None = 0,
-		WindowClose,WindowResize,WindowFocus,WindowLostFocus,WindowMoved,
-		AppTick,AppUpdate,AppRender,
-		KeyPressed,KeyReleased,KeyTyped,
-		MouseButtonPressed,MouseButtonReleased,MouseMoved,MouseScrolled
+		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
+		AppTick, AppUpdate, AppRender,
+		KeyPressed, KeyReleased, KeyTyped,
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
 	enum  EventCategory
 	{
-		None=0,
-		EventCategoryApplication	=	BIT(0),
-		EventCategoryInput			=	BIT(1),
-		EventCategoryKeyboard		=	BIT(2),
-		EventCategoryMouse			=	BIT(3),
-		EventCategoryMouseButton	=	BIT(4),
+		None = 0,
+		EventCategoryApplication = BIT(0),
+		EventCategoryInput = BIT(1),
+		EventCategoryKeyboard = BIT(2),
+		EventCategoryMouse = BIT(3),
+		EventCategoryMouseButton = BIT(4),
 	};
 
 
@@ -55,7 +55,7 @@ namespace Hazel
 		}
 		bool m_Handled = false;
 	protected:
-		
+
 
 	};
 
@@ -68,7 +68,7 @@ namespace Hazel
 
 	public:
 		EventDispatcher(Event& event)
-			:m_Event(event){}
+			:m_Event(event) {}
 
 
 		template<typename T>
@@ -86,10 +86,28 @@ namespace Hazel
 		Event& m_Event;
 	};
 
-	 inline std::ostream& operator<<(std::ostream& os, const Event& e)
+
+
+
+	inline std::ostream& operator<<(std::ostream& os, const Event& e)
 	{
-		 return os << e.ToString();
+		return os << e.ToString();
 	}
 
-	
+	template<typename T>
+	struct fmt::formatter<T, std::enable_if_t<std::is_base_of<Event, T>::value, char>>
+		: fmt::formatter<std::string> 
+	{
+		auto format(const T& event, fmt::format_context& ctx) 
+		{
+			return fmt::format_to(ctx.out(), "{}", event.ToString());
+		}
+	};
+
+	template <typename... T>
+	std::string StringFromArgs(fmt::format_string<T...> fmt, T&&... args) 
+	{
+		return fmt::format(fmt, std::forward<T>(args)...);
+	}
+
 }

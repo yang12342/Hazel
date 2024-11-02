@@ -2,11 +2,15 @@
 
 
 #ifdef  HZ_PLATFORM_WINDOWS
+#if HZ_DYNAMIC_LINK
 	#ifdef HAZEL_BUILD_DLL
 		#define HAZEL_API __declspec(dllexport)
 	#else 
 		#define HAZEL_API __declspec(dllimport)
 	#endif // HZ_BUILD_DLL
+#else
+	#define HAZEL_API
+#endif
 #else
 	#error Hazel only supports windows!
 
