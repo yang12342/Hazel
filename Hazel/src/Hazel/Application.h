@@ -2,25 +2,20 @@
 
 #include "Core.h"
 
-
+#include	"Window.h"
+#include	"LayerStack.h"
 #include	"Hazel/Events/Event.h"
 #include	"Hazel/Events/ApplicationEvent.h"
-#include	"LayerStack.h"
-#include	"Window.h"
-#include	"Hazel/Renderer/VertexArray.h"
 
+#include "Hazel/Core/Timestep.h"
 
 #include	"Hazel/ImGui/ImGuiLayer.h"
 
-#include	"Hazel/Renderer/Shader.h"
-#include	"Hazel/Renderer/Buffer.h"
-#include	"Hazel/Renderer/VertexArray.h"
-#include	"Renderer/OrthographicCamera.h"
 
 
 namespace Hazel
 {
-	class HAZEL_API Application
+	class Application
 	{
 	public:
 		Application();
@@ -45,7 +40,8 @@ namespace Hazel
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_running = true;
 		LayerStack m_LayerStack;
-
+		Timestep m_Timestep;
+		float m_LastFrameTime = 0.0f;
 
 
 
