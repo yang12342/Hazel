@@ -5,6 +5,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Platform/OpenGL/OpenGLShader.h"
 
+
+
 class ExampleLayer :public Hazel::Layer
 {
 public:
@@ -131,8 +133,8 @@ public:
 		)";
 
 
-		m_Shader.reset(Hazel::Shader::Create(vertexSrc, fragmentSrc));
-		m_flatColorShader.reset(Hazel::Shader::Create(flatColorvertexSrc, flatColorfragmentSrc));
+		m_Shader=Hazel::Shader::Create("VertexPosColor",vertexSrc, fragmentSrc);
+		m_flatColorShader=Hazel::Shader::Create("FlatColor",flatColorvertexSrc, flatColorfragmentSrc);
 
 
 
@@ -168,13 +170,13 @@ public:
 			}
 		)";
 
-		m_TextureShader.reset(Hazel::Shader::Create("assets/shader/Texture.glsl"));
+		auto textureShader=m_ShaderLibrary.Load("assets/shader/Texture.glsl");
 		m_Texture=Hazel::Texture2D::Create("assets/textures/avatar.png");
 		m_test = Hazel::Texture2D::Create("assets/textures/test.png");
 
 
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->Bind();
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
 
 		
 	}
@@ -225,11 +227,13 @@ public:
 			}
 		}
 		
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+
 		m_Texture->Bind();
-		Hazel::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Hazel::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		m_test->Bind();
-		Hazel::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Hazel::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		//Hazel::Renderer::Submit(m_Shader, m_VertexArray);
 
@@ -243,18 +247,19 @@ public:
 
 
 	virtual void OnImGuiRender()override
-	{
+	{ 
 		ImGui::Begin("Settings");
 		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
 		ImGui::End();
 	}
 
 private:
+	Hazel::ShaderLibrary m_ShaderLibrary;
 	Hazel::Ref<Hazel::Shader> m_Shader;
 	Hazel::Ref<Hazel::VertexArray> m_VertexArray;
 
 	Hazel::Ref<Hazel::VertexArray> m_SquareVA;
-	Hazel::Ref<Hazel::Shader> m_flatColorShader,m_TextureShader;
+	Hazel::Ref<Hazel::Shader> m_flatColorShader;
 
 	Hazel::Ref<Hazel::Texture2D> m_Texture,m_test;
 
