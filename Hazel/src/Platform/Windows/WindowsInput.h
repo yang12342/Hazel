@@ -1,6 +1,8 @@
 #pragma once
 #include "Hazel/Input.h"
 
+//轮询机制窗口事件获取
+
 namespace Hazel
 {
 	class WindowsInput :public Input
